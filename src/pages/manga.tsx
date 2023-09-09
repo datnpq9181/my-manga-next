@@ -1,27 +1,29 @@
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
+
+interface Manga {
+    id_book: number;
+    avatar: string;
+    name: string;
+    rss_chapter: string;
+  }
 
 const Manga = () => {
-  const [mangaList, setMangaList] = useState([]);
+    const [mangaList, setMangaList] = useState<Manga[]>([]);
 
   useEffect(() => {
-    fetchMangaList();
+    void fetchMangaList();
   }, []);
-
-  function capitalizeWords(str) {
-    return str
-      .split(" ")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
-  }
 
   const fetchMangaList = async () => {
     try {
       const proxyUrl = "https://cors-anywhere.herokuapp.com/";
       const apiUrl = "https://cmangaaz.com/api/rss_new";
       const response = await fetch(proxyUrl + apiUrl);
-
+  
       if (response.ok) {
-        const data = await response.json();
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const data: Manga[] = await response.json();
         setMangaList(data);
       } else {
         throw new Error("Failed to fetch manga");
@@ -40,7 +42,7 @@ const Manga = () => {
             key={manga.id_book}
           >
             <div className="manga-image">
-              <img
+              <Image
                 src={manga.avatar}
                 alt={manga.name}
                 className="object-cover w-full h-56 sm:h-64 md:h-72"
@@ -53,7 +55,7 @@ const Manga = () => {
                 rel="noopener noreferrer"
                 className="hover:underline"
               >
-                {capitalizeWords(manga.name)}
+                {manga.name}
               </a>
             </h2>
           </div>
